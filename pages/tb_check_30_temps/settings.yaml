@@ -1,0 +1,36 @@
+Debug: 0
+
+OutputFolder: output
+
+NodeList:
+  - 272377C1
+  - 272377C2
+  - 272377C3
+  - 272377C4
+  - 272377C5
+  - 272377C6
+
+StartTimestamp:
+  Year: 2022
+  Month: 10
+  Day: 6
+  Hour: 12
+  Minute: 50
+
+EndTimestamp:
+  Year: 2022
+  Month: 10
+  Day: 6
+  Hour: 14
+  Minute: 20
+
+HighTempThreshold: 28
+LowTempThreshold: 21
+FrequencyMS: 60000
+
+Thingsboard:
+  Host: http://ops.aoms-tech.com
+  Port: 8080
+  Username: hardware@aoms-tech.com
+  Password: Zhr9byhcwMt_YZLPY!_ta@
+  CustomerName: AOMS OPS

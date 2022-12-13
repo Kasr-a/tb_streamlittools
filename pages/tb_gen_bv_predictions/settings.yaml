@@ -1,0 +1,35 @@
+Debug: 0
+Mode: 0
+
+OutputFolder: output
+
+StartNode: 260a2205
+EndNode: 260a2216
+NodeList:
+  - 260A2206
+  - 260A2214
+  - 260A2212
+TripledNodeList:
+BlacklistNodes:
+  - 260a2230
+
+HardwareVersions:
+
+StartTimestamp:
+  Year: 2022
+  Month: 9
+  Day: 16
+  Hour: 12
+
+EndTimestamp:
+  Year: 2022
+  Month: 9
+  Day: 28
+  Hour: 20
+
+Thingsboard:
+  Host: http://ops.aoms-tech.com
+  Port: 8080
+  Username: hardware@aoms-tech.com
+  Password: Zhr9byhcwMt_YZLPY!_ta@
+  CustomerName: AOMS OPS

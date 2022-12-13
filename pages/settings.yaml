@@ -1,0 +1,26 @@
+Debug: 0
+Mode: 0
+
+OutputFolder: output
+
+StartNode: 260a1450
+EndNode: 260a1460
+NodeList:
+BlacklistNodes:
+  - 260A1117
+
+HardwareVersions:
+  - SKYLA_F0
+  - SKYLA_G0
+
+StartTimestamp:
+  Year: 2021
+  Month: 11
+  Day: 30
+
+Thingsboard:
+  Host: http://ops.aoms-tech.com
+  Port: 8080
+  Username: hardware@aoms-tech.com
+  Password: Zhr9byhcwMt_YZLPY!_ta@
+  CustomerName: AOMS OPS

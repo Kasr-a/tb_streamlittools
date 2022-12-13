@@ -1,0 +1,40 @@
+Debug: 0
+Mode: 0
+
+OutputFolder: output
+
+StartNode: 260a2000
+EndNode: 260a2003
+NodeList:
+BlacklistNodes:
+  - 260A1117
+
+KeysList:
+  - data.N.payload.BV
+  - data.B.frame_count
+  - data.E.pcnt
+  - data.A.pcnt
+  - data.N.pcnt
+  - data.I.pcnt
+  - data.D.pcnt
+  - conn_time
+  - network_fcnt
+  - data.N.payload.TH.T
+
+
+    
+  - data.I.payload.T.1
+  - data.E.payload.ASCII.1.fb
+  - data.E.payload.ASCII.2.fb
+
+StartTimestamp:
+  Year: 2022
+  Month: 06
+  Day: 15
+
+Thingsboard:
+  Host: http://ops.aoms-tech.com
+  Port: 8080
+  Username: hardware@aoms-tech.com
+  Password: Zhr9byhcwMt_YZLPY!_ta@
+  CustomerName: AOMS OPS
