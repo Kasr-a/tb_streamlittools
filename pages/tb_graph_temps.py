@@ -7,6 +7,9 @@ import pytz
 from datetime import datetime
 import logging
 import streamlit as st
+from datetime import time as t
+from datetime import date as d
+from datetime import datetime as dt
 
 
 # Expanders setup
@@ -15,7 +18,7 @@ tm = st.expander('Start time stamp')
 nl = st.expander('Node List')
 hv = st.expander('Hardware Version')
 
-# Thingsboard setup
+# Thingsboard
 tb_keylist = ['Host', 'Port', 'Username', 'Password', 'CustomerName']
 ThingsBoard = dict(zip(tb_keylist, [None] * len(tb_keylist)))
 eth.subheader('ThingsBoard')
@@ -34,15 +37,39 @@ ThingsBoard['Password'] = eth.text_input('Please Enter Password', type='password
 ThingsBoard['CustomerName'] = eth.text_input('Please Enter Customer Name',
                                              placeholder='AOMS OPS', value='AOMS OPS')
 
-# Date picker setup
-sts = tm.date_input(label='Start Time Stamp ',
-                    value=(d(year=2021, month=11, day=30)))
 
-TimeStamp = {
-    'Year': sts.year,
-    'Month': sts.month,
-    'Day': sts.day
+# Date picker setup
+sed = tm.date_input(label='Start-End date ',
+                    value=(d(year=2022, month=10, day=28),
+                           d(year=2022, month=10, day=31)),
+                    key='date_range')
+
+
+hms = tm.time_input('Start time',
+                    value=(t(hour=19, minute=0)),
+                    key='start_time')
+hme = tm.time_input('End time',
+                    value=(t(hour=8, minute=0)),
+                    key='end_time')
+
+
+finSD = dt.combine(sed[0], hms)
+finED = dt.combine(sed[1], hme)
+sDate = {
+    'Year': finSD.year,
+    'Month': finSD.month,
+    'Day': finSD.day,
+    'Hour': finSD.hour,
+    'Minute': finSD.minute
 }
+eDate = {
+    'Year': finED.year,
+    'Month': finED.month,
+    'Day': finED.day,
+    'Hour': finED.hour,
+    'Minute': finED.day
+}
+
 
 # Debugger and mode
 debug = st.checkbox('Debug',
@@ -51,10 +78,10 @@ mode = st.selectbox('Mode', [0, 1], help='0 = BV difference on Creed Active risi
                                          '1 = A distribution')
 
 # Setting up node file uploader
-Nodes = nl.file_uploader('Upload Node .txt file')
+Nodes = nl.file_uploader('Upload Nodelist .txt file')
 blNodes = nl.file_uploader('Upload Blacklisted Nodes .txt file')
-StartNode = nl.text_input('Start Node', value='260a1450')
-EndNode = nl.text_input('End Node', value='260a1460')
+StartNode = nl.text_input('Start Node', value='260a2000')
+EndNode = nl.text_input('End Node', value='260a2003')
 
 NodeList = ''
 BLNodeList = ''
@@ -63,8 +90,7 @@ if Nodes is not None:
 if blNodes is not None:
     BLNodeList = blNodes.getvalue().decode('utf-8').splitlines()
 
-Hw_v = hv.file_uploader('Upload Hardware version .txt file')
-HardwareVersion = Hw_v.getvalue().decode('utf-8').splitlines()
+
 
 if st.button('Done'):
     SCRIPT_PATH = path.dirname(path.realpath(__file__))
@@ -90,7 +116,7 @@ if st.button('Done'):
 
         for short_id in range(start_node_int, end_node_int + 1):
             long_id = "260A" + str(short_id)
-            if long_id not in SETTINGS["BlacklistNodes"]:
+            if long_id not in BLNodeList:
                 node_list.append(long_id)
 
         return node_list
@@ -104,20 +130,20 @@ if st.button('Done'):
             pass
 
         # Login to thingsboard
-        TB_URL = SETTINGS["Thingsboard"]["Host"] + ":" + str(SETTINGS["Thingsboard"]["Port"])
+        TB_URL = ThingsBoard['Host'] + ":" + str(ThingsBoard['Port'])
         tb_client = RestClientPE(base_url=TB_URL)
-        tb_client.login(username=SETTINGS["Thingsboard"]["Username"], password=SETTINGS["Thingsboard"]["Password"])
+        tb_client.login(username=ThingsBoard['Username'], password=ThingsBoard['Password'])
 
         # Generate device spec dictionary
-        if SETTINGS["NodeList"]:
-            if type(SETTINGS["NodeList"]) == list:
-                my_devices = SETTINGS["NodeList"]
+        if NodeList:
+            if type(NodeList) == list:
+                my_devices = NodeList
             else:
-                my_devices = [SETTINGS["NodeList"]]
+                my_devices = NodeList
         else:
-            my_devices = get_node_list_from_startid_and_endid(SETTINGS["StartNode"], SETTINGS["EndNode"])
+            my_devices = get_node_list_from_startid_and_endid(StartNode, EndNode)
 
-        device_list = get_devices_by_customer_name_as_dict(tb_client, SETTINGS["Thingsboard"]["CustomerName"])
+        device_list = get_devices_by_customer_name_as_dict(tb_client, ThingsBoard['CustomerName'])
         my_devices_specs = {k: device_list[k] for k in device_list if k in my_devices}
         logger.debug(my_devices_specs)
 
@@ -125,15 +151,15 @@ if st.button('Done'):
         keys_list = ['data.E.payload.T.1', 'data.E.payload.T.2', 'data.E.payload.T.3',
                      'data.E.payload.T.4', 'data.E.payload.T.5', 'data.E.payload.T.6']
         start_ts = int(pytz.timezone("America/New_York").localize(
-            datetime(year=int(SETTINGS["StartTimestamp"]["Year"]),
-                     month=int(SETTINGS["StartTimestamp"]["Month"]),
-                     day=int(SETTINGS["StartTimestamp"]["Day"]),
-                     hour=int(SETTINGS["StartTimestamp"]["Hour"]))).timestamp()) * 1000
+            datetime(year=int(sDate['Year']),
+                     month=int(sDate['Month']),
+                     day=int(sDate['Day']),
+                     hour=int(sDate['Hour']))).timestamp()) * 1000
         end_ts = int(pytz.timezone("America/New_York").localize(
-            datetime(year=int(SETTINGS["EndTimestamp"]["Year"]),
-                     month=int(SETTINGS["EndTimestamp"]["Month"]),
-                     day=int(SETTINGS["EndTimestamp"]["Day"]),
-                     hour=int(SETTINGS["EndTimestamp"]["Hour"]))).timestamp()) * 1000
+            datetime(year=int(eDate['Year']),
+                     month=int(eDate['Month']),
+                     day=int(eDate['Day']),
+                     hour=int(eDate['Hour']))).timestamp()) * 1000
         df_dict = {}
 
         # While loop to pull data and fill dicts

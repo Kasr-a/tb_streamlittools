@@ -3,20 +3,26 @@ Mode: 0
 
 OutputFolder: output
 
-StartNode: 260a1450
-EndNode: 260a1460
+StartNode: 260a2000
+EndNode: 260a2003
 NodeList:
+  - 260A0365
+  - 260A1859
+  - 260A0369
+  - 260A1790
 BlacklistNodes:
-  - 260A1117
-
-HardwareVersions:
-  - SKYLA_F0
-  - SKYLA_G0
 
 StartTimestamp:
-  Year: 2021
-  Month: 11
-  Day: 30
+  Year: 2022
+  Month: 07
+  Day: 11
+  Hour: 08
+
+EndTimestamp:
+  Year: 2022
+  Month: 07
+  Day: 12
+  Hour: 08
 
 Thingsboard:
   Host: http://ops.aoms-tech.com

@@ -1,7 +1,8 @@
 from os import path, mkdir
 from lib.mCommon.thingsboard import *
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
+import matplotlib
 import yaml
 import pytz
 from datetime import datetime
@@ -11,7 +12,7 @@ from datetime import datetime as dt
 from datetime import date as d
 from datetime import time as t
 
-st.text(f'matplotlib: {plt.__version__}')
+
 # MODE = 0 ==> BV difference on Creed Active rising edge distribution
 # MODE = 1 ==> A distribution
 
@@ -59,19 +60,20 @@ mode = st.selectbox('Mode', [0, 1], help='0 = BV difference on Creed Active risi
 # Setting up node file uploader
 Nodes = nl.file_uploader('Upload Node .txt file')
 blNodes = nl.file_uploader('Upload Blacklisted Nodes .txt file')
+Hw_v = hv.file_uploader('Upload Hardware version .txt file')
 StartNode = nl.text_input('Start Node', value='260a1450')
 EndNode = nl.text_input('End Node', value='260a1460')
 
 NodeList = ''
 BLNodeList = ''
+HardwareVersion = ''
 if Nodes is not None:
     NodeList = Nodes.getvalue().decode('utf-8').splitlines()
 if blNodes is not None:
     BLNodeList = blNodes.getvalue().decode('utf-8').splitlines()
-
-Hw_v = hv.file_uploader('Upload Hardware version .txt file')
 if Hw_v is not None:
-    HardwareVersion = Hw_v
+    HardwareVersion = Hw_v.getvalue().decode('utf-8').splitlines()
+
 if st.button('Done'):
     SCRIPT_PATH = path.dirname(path.realpath(__file__))
     SETTINGS_PATH = path.join(SCRIPT_PATH, 'settings.yaml')
@@ -107,10 +109,10 @@ if st.button('Done'):
 
     if __name__ == '__main__':
         # Make output directory
-        try:
-            mkdir(path.join(SCRIPT_PATH, SETTINGS["OutputFolder"]))
-        except:
-            pass
+        # try:
+        #     mkdir(path.join(SCRIPT_PATH, SETTINGS["OutputFolder"]))
+        # except:
+        #     pass
 
         # Login to thingsboard
         TB_URL = ThingsBoard['Host'] + ":" + str(ThingsBoard['Port'])
@@ -262,31 +264,35 @@ if st.button('Done'):
             x = x[-20:]
             y = y[-20:]
 
-        fig, ax = plt.pyplot.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(12, 6))
         bars = ax.bar(x, y)
-        ax.bar_label(bars)
+        # ax.bar_label(bars)
 
-        plt.pyplot.title("%s" % aggregate_title)
-        plt.pyplot.xlabel("Voltage Groups")
-        plt.pyplot.ylabel("Number of Occurrences")
+        plt.title("%s" % aggregate_title)
+        plt.xlabel("Voltage Groups")
+        plt.ylabel("Number of Occurrences")
+
+
 
         text_x = 0
         text_y = 0
 
         if HardwareVersion:
-            plt.pyplot.figtext(0.5, 0.01,
+            plt.figtext(0.5, 0.01,
                                "%s: %f ; Hardware Versions Included: %s" % (aggregate_title,
                                                                             aggregate_val, HardwareVersion),
                                ha="center", va="center", fontsize=18,
                                bbox={"facecolor": "blue", "alpha": 0.5})
         else:
-            plt.pyplot.figtext(0.5, 0.01, "%s: %f" % (aggregate_title, aggregate_val), ha="center", va="center",
+            plt.figtext(0.5, 0.01, "%s: %f" % (aggregate_title, aggregate_val), ha="center", va="center",
                                fontsize=18,
                                bbox={"facecolor": "blue", "alpha": 0.5})
 
         if mode:
-            plt.pyplot.savefig(
+            plt.savefig(
                 path.join(path.join(SCRIPT_PATH, SETTINGS["OutputFolder"]), f"A_{my_devices[0]}_{start_ts}"))
         else:
-            plt.pyplot.savefig(path.join(path.join(SCRIPT_PATH, SETTINGS["OutputFolder"]),
+            plt.savefig(path.join(path.join(SCRIPT_PATH, SETTINGS["OutputFolder"]),
                                          f"BV_{StartNode}-{EndNode}_{start_ts}"))
+
+        st.pyplot(fig)
