@@ -40,13 +40,13 @@ ThingsBoard['CustomerName'] = eth.text_input('Please Enter Customer Name',
 
 # Date picker setup
 sed = tm.date_input(label='Start-End date ',
-                    value=(d(year=2022, month=10, day=28),
-                           d(year=2022, month=10, day=31)),
+                    value=(d(year=2022, month=7, day=11),
+                           d(year=2022, month=7, day=12)),
                     key='date_range')
 
 
 hms = tm.time_input('Start time',
-                    value=(t(hour=19, minute=0)),
+                    value=(t(hour=8, minute=0)),
                     key='start_time')
 hme = tm.time_input('End time',
                     value=(t(hour=8, minute=0)),
@@ -274,4 +274,4 @@ if st.button('Done'):
         plt.title("Temperature vs Time")
         plt.legend()
 
-        plt.show()
+        #plt.show()
